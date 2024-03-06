@@ -1,0 +1,434 @@
+{
+    "cropRotation": [
+        {
+            "worksteps": [
+                {
+                    "date": "2018-04-21",
+                    "type": "Sowing",
+                    "crop": {
+                        "is-winter-crop": false,
+                        "cropParams": {
+                            "species": ["ref", "tomato_params", "species"],
+                            "cultivar": ["ref", "tomato_params", "cultivar"]
+                        },
+                        "residueParams": ["ref", "tomato_params", "residue"]
+                    }
+                },
+                {
+                    "date": "2018-09-20",
+                    "type": "Harvest"
+                }
+            ]
+        }
+    ],
+    "CropParameters": {
+        "__enable_vernalisation_factor_fix__": true,
+        "CanopyReflectionCoefficient": 0.08,
+        "GrowthRespirationParameter1": 0.1,
+        "GrowthRespirationParameter2": 38,
+        "GrowthRespirationRedux": 0.7,
+        "MaintenanceRespirationParameter1": 0.08,
+        "MaintenanceRespirationParameter2": 44,
+        "MaxCropNDemand": 6,
+        "MinimumAvailableN": 0.000075,
+        "MinimumNConcentrationRoot": 0.005,
+        "ReferenceAlbedo": 0.23,
+        "ReferenceLeafAreaIndex": 1.44,
+        "ReferenceMaxAssimilationRate": 30,
+        "SaturationBeta": 2.5,
+        "StomataConductanceAlpha": 40,
+        "Tortuosity": 0.002,
+        "type": "UserCropParameters"
+    },
+    "tomato_params": {
+        "species": {
+            "AbovegroundOrgan": [
+                false,
+                true,
+                true,
+                true
+            ],
+            "AssimilateReallocation": 0.30000001192092896,
+            "BaseTemperature": [
+                0,
+                1,
+                1,
+                1,
+                9,
+                9,
+                9
+            ],
+            "CarboxylationPathway": 1,
+            "CriticalOxygenContent": [
+                0.080000000000000002,
+                0.080000000000000002,
+                0.080000000000000002,
+                0.080000000000000002,
+                0.080000000000000002,
+                0.080000000000000002,
+                0.080000000000000002
+            ],
+            "CuttingDelayDays": 0,
+            "DefaultRadiationUseEfficiency": 0.5,
+            "DevelopmentAccelerationByNitrogenStress": 1,
+            "DroughtImpactOnFertilityFactor": 0,
+            "FieldConditionModifier": 1,
+            "InitialKcFactor": 0.40000000596046448,
+            "InitialOrganBiomass": [
+                53,
+                53,
+                0,
+                0
+            ],
+            "InitialRootingDepth": 0.10000000149011612,
+            "LimitingTemperatureHeatStress": 40,
+            "LuxuryNCoeff": 1.1000000238418579,
+            "MaxCropDiameter": 0.004999999888241291,
+            "MaxNUptakeParam": 3.1449999809265137,
+            "MinimumNConcentration": 0.004999999888241291,
+            "MinimumTemperatureForAssimilation": 7,
+            "MinimumTemperatureRootGrowth": 10,
+            "NConcentrationAbovegroundBiomass": 0.059999998658895493,
+            "NConcentrationB0": 3,
+            "NConcentrationPN": 1.6000000238418579,
+            "NConcentrationRoot": 0.019999999552965164,
+            "OrganGrowthRespiration": [
+                0.01,
+                0.029999999999999999,
+                0.014999999999999999,
+                0.01
+            ],
+            "OrganMaintenanceRespiration": [
+                0.01,
+                0.029999999999999999,
+                0.014999999999999999,
+                0.01
+            ],
+            "PartBiologicalNFixation": 0,
+            "PlantDensity": 30,
+            "RootDistributionParam": 0.0027870000340044498,
+            "RootFormFactor": 3,
+            "RootGrowthLag": -30,
+            "RootPenetrationRate": 0.00139999995008111,
+            "SamplingDepth": 0.89999997615814209,
+            "SpeciesName": "tomato",
+            "SpecificRootLength": 300,
+            "StageAfterCut": 0,
+            "StageAtMaxDiameter": 2,
+            "StageAtMaxHeight": 3,
+            "StageMaxRootNConcentration": [
+                0.02,
+                0.02,
+                0.012,
+                0.01,
+                0.01,
+                0.01,
+                0.01
+            ],
+            "StorageOrgan": [
+                false,
+                false,
+                false,
+                true
+            ],
+            "TargetN30": 50,
+            "TargetNSamplingDepth": 160,
+            "type": "SpeciesParameters"
+        },
+        "cultivar": {
+            "AssimilatePartitioningCoeff": [
+                [
+                    0.5,
+                    0.5,
+                    0,
+                    0
+                ],
+                [
+                    0.20000000000000001,
+                    0.20000000000000001,
+                    0.59999999999999998,
+                    0
+                ],
+                [
+                    0.13,
+                    0.20000000000000001,
+                    0.67000000000000004,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0.029999999999999999,
+                    0.96999999999999997
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ],
+            "BaseDaylength": [
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "h"
+            ],
+            "BeginSensitivePhaseHeatStress": [
+                340,
+                "°C d"
+            ],
+            "CriticalTemperatureHeatStress": [
+                31,
+                "°C"
+            ],
+            "CropHeightP1": 6,
+            "CropHeightP2": 0.5,
+            "CropSpecificMaxRootingDepth": 0.89999997615814209,
+            "CultivarName": "field tomato",
+            "DaylengthRequirement": [
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "h"
+            ],
+            "Description": "",
+            "DroughtStressThreshold": [
+                1,
+                0.90000000000000002,
+                1,
+                1,
+                0.90000000000000002,
+                0.80000000000000004,
+                0.80000000000000004
+            ],
+            "EndSensitivePhaseHeatStress": [
+                1000,
+                "°C d"
+            ],
+            "FrostDehardening": 0,
+            "FrostHardening": 0,
+            "HeatSumIrrigationEnd": 1676,
+            "HeatSumIrrigationStart": 100,
+            "LT50cultivar": 0,
+            "LatestHarvestDoy": -1,
+            "LowTemperatureExposure": 0,
+            "MaxAssimilationRate": 48,
+            "MaxCropHeight": [
+                0.60000002384185791,
+                "m"
+            ],
+            "OptimumTemperature": [
+                [
+                    30,
+                    30,
+                    30,
+                    30,
+                    30,
+                    30,
+                    30
+                ],
+                "°C"
+            ],
+            "OrganIdsForCutting": [
+            ],
+            "OrganIdsForPrimaryYield": [
+                {
+                    "organId": 4,
+                    "type": "YieldComponent",
+                    "yieldDryMatter": 0.059999999999999998,
+                    "yieldPercentage": 0.90000000000000002
+                }
+            ],
+            "OrganIdsForSecondaryYield": [
+            ],
+            "OrganSenescenceRate": [
+                [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0.01,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0.01,
+                    0.01,
+                    0
+                ]
+            ],
+            "Perennial": false,
+            "ResidueNRatio": 1,
+            "RespiratoryStress": 0,
+            "SpecificLeafArea": [
+                [
+                    0.0030000000000000001,
+                    0.0028,
+                    0.0025000000000000001,
+                    0.0022000000000000001,
+                    0.002,
+                    0.002,
+                    0.002
+                ],
+                "ha kg-1"
+            ],
+            "StageKcFactor": [
+                [
+                    0.40000000000000002,
+                    0.59999999999999998,
+                    1.1499999999999999,
+                    1.1499999999999999,
+                    1,
+                    0.80000000000000004,
+                    0.25
+                ],
+                "1;0"
+            ],
+            "StageTemperatureSum": [
+                [
+                    50,
+                    260,
+                    130,
+                    100,
+                    700,
+                    500,
+                    25
+                ],
+                "°C d"
+            ],
+            "VernalisationRequirement": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "type": "CultivarParameters"
+        },
+        "residue": {
+            "AOM_DryMatterContent": [
+                1,
+                "kg DM kg FM-1",
+                "Dry matter content of added organic matter"
+            ],
+            "AOM_FastDecCoeffStandard": [
+                0.05000000074505806,
+                "d-1",
+                "Decomposition rate coefficient of fast AOM at standard conditions"
+            ],
+            "AOM_NH4Content": [
+                0,
+                "kg N kg DM-1",
+                "Ammonium content in added organic matter"
+            ],
+            "AOM_NO3Content": [
+                0.0010000000474974513,
+                "kg N kg DM-1",
+                "Nitrate content in added organic matter"
+            ],
+            "AOM_SlowDecCoeffStandard": [
+                0.012000000104308128,
+                "d-1",
+                "Decomposition rate coefficient of slow AOM at standard conditions"
+            ],
+            "CN_Ratio_AOM_Fast": [
+                0,
+                "20",
+                "C to N ratio of the rapidly decomposing AOM pool"
+            ],
+            "CN_Ratio_AOM_Slow": [
+                47.700000762939453,
+                "",
+                "C to N ratio of the slowly decomposing AOM pool"
+            ],
+            "NConcentration": [
+                0.005,
+                "kg N kg DM-1",
+                "Nitrogen content in added organic matter"
+            ],
+            "CorgContent": [
+                0.46,
+                "kg C kg DM-1",
+                "Carbon content in added organic matter"
+            ],
+            "PartAOM_Slow_to_SMB_Fast": [
+                0.5,
+                "kg kg-1",
+                "Part of AOM slow consumed by fast soil microbial biomass"
+            ],
+            "PartAOM_Slow_to_SMB_Slow": [
+                0.5,
+                "kg kg-1",
+                "Part of AOM slow consumed by slow soil microbial biomass"
+            ],
+            "PartAOM_to_AOM_Fast": [
+                0.62000000476837158,
+                "kg kg-1",
+                "Part of AOM that is assigned to the rapidly decomposing pool"
+            ],
+            "PartAOM_to_AOM_Slow": [
+                0.37999999523162842,
+                "kg kg-1",
+                "Part of AOM that is assigned to the slowly decomposing pool"
+            ],
+            "residueType": "",
+            "species": "tomato",
+            "type": "CropResidueParameters"
+        }
+    }
+}

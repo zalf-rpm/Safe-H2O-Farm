@@ -1,0 +1,64 @@
+{
+	"crop.json": "crop.json",
+	"site.json": "site.json",
+	"climate.csv": "climate.csv",
+
+	"climate.csv-options": {
+		"no-of-climate-file-header-lines": 1,
+		"csv-separator": ",",
+		"header-to-acd-names": {
+			"PragaDate": "iso-date",
+			"DAILY_RAD": ["globrad", "/", 100],
+			"DAILY_TMIN": "tmin",
+			"DAILY_TMAX": "tmax",
+			"DDAILY_TAVG": "tavg",
+			"DAILY_PREC": "precip",
+			"DAILY_RHAVG": "relhumid",
+			"W_SCAL_INT": "wind"
+		}
+	},
+	
+	"debug?": false,
+	"include-file-base-path": "${MONICA_PARAMETERS}/",
+
+	"output": {
+	  	"write-file?": true,
+		"path-to-output": "./",
+		"file-name": "sim-out.csv",
+	
+		"csv-options": {
+			"include-header-row": true,
+			"include-units-row": true,
+			"include-aggregati,on-rows": false,
+			"csv-separator": ","
+		},
+		
+		"events" : [
+			"crop", [
+				"Year",
+				["Yield", "LAST"]
+			]
+		]
+	},
+
+	"UseSecondaryYields": true,
+	"NitrogenResponseOn": true,
+	"WaterDeficitResponseOn": true,
+	"EmergenceMoistureControlOn": true,
+	"EmergenceFloodingControlOn": true,
+
+	"UseAutomaticIrrigation": false,
+	"AutoIrrigationParams": {
+		"irrigationParameters": {
+			"nitrateConcentration": [0, "mg dm-3"],
+			"sulfateConcentration": [0, "mg dm-3"]
+		},
+		"amount": [17, "mm"],
+		"threshold": 0.35
+	},
+
+	"UseNMinMineralFertilisingMethod": false,
+	"NMinUserParams": { "min": 40, "max": 120, "delayInDays": 10 },
+	"NMinFertiliserPartition": ["include-from-file", "mineral-fertilisers/AN.json"],
+	"JulianDayAutomaticFertilising": 89
+}
