@@ -39,19 +39,19 @@ PATH_TO_CAPNP_SCHEMAS = (PATH_TO_MAS_INFRASTRUCTURE_REPO / "capnproto_schemas").
 abs_imports = [str(PATH_TO_CAPNP_SCHEMAS)]
 common_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "common.capnp"), imports=abs_imports)
 fbp_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "fbp.capnp"), imports=abs_imports)
-soil_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "soil_data.capnp"), imports=abs_imports)
+soil_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "soil.capnp"), imports=abs_imports)
 model_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "model.capnp"), imports=abs_imports)
-climate_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "climate_data.capnp"), imports=abs_imports)
-mgmt_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "models/monica/monica_management.capnp"), imports=abs_imports)
-geo_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "geo_coord.capnp"), imports=abs_imports)
+climate_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "climate.capnp"), imports=abs_imports)
+mgmt_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "model/monica/monica_management.capnp"), imports=abs_imports)
+geo_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "geo.capnp"), imports=abs_imports)
 grid_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "grid.capnp"), imports=abs_imports)
 
 import monica_io3
 import monica_run_lib as Mrunlib
 
 config = {
-    "in_sr": None, # string
-    "out_sr": None, # utm_coord + id attr
+    "in_sr": None,  # string
+    "out_sr": None,  # utm_coord + id attr
     "sim.json": "sim.json",
     "crop.json": "crop.json",
     "site.json": "site.json",
@@ -90,7 +90,7 @@ env_template = monica_io3.create_env_json_from_json_config({
     "climate": ""
 })
 
-while ports["in"] and any(ports["out"]):
+while ports["in"] and ports["out"]:
     try:
         in_msg = ports["in"].read().wait()
         # check for end of data from in port
@@ -98,15 +98,17 @@ while ports["in"] and any(ports["out"]):
             ports["in"] = None
             continue
 
-        in_ip = in_msg.value.as_struct(common_capnp.IP)
+        in_ip = in_msg.value.as_struct(fbp_capnp.IP)
         llcoord = common.get_fbp_attr(in_ip, config["coord_attr"]).as_struct(geo_capnp.LatLonCoord)
         #height_nn = common.get_fbp_attr(in_ip, config["dgm_attr"]).as_struct(grid_capnp.Grid.Value).f
         #slope = common.get_fbp_attr(in_ip, config["slope_attr"]).as_struct(grid_capnp.Grid.Value).f
-        timeseries = common.get_fbp_attr(in_ip, config["climate_attr"]).as_interface(climate_capnp.TimeSeries)
+        ts_attr = common.get_fbp_attr(in_ip, config["climate_attr"])
+        timeseries = ts_attr.as_interface(climate_capnp.TimeSeries) if ts_attr else None
         #soil_profile = common.get_fbp_attr(in_ip, config["soil_attr"]).as_struct(soil_capnp.Profile)
         soil_profile = json.loads(common.get_fbp_attr(in_ip, config["soil_attr"]).as_text())
         ilr = common.get_fbp_attr(in_ip, config["ilr_attr"]).as_struct(mgmt_capnp.ILRDates)
-        id = common.get_fbp_attr(in_ip, config["id_attr"]).as_text()
+        id = int(common.get_fbp_attr(in_ip, config["id_attr"]).as_text())
+        year = int(common.get_fbp_attr(in_ip, "year").as_text())
 
         #if len(soil_profile.layers) == 0:
         #    continue
@@ -118,45 +120,49 @@ while ports["in"] and any(ports["out"]):
         sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
         if ilr._has("sowing"):
             s = ilr.sowing
-            sowing_ws["date"] = "{:04d}-{:02d}-{:02d}".format(s.year, s.month, s.day)
+            sowing_ws["date"] = f"{s.year:04d}-{s.month:02d}-{s.day:02d}"
         if ilr._has("earliestSowing"):
             s = ilr.earliestSowing
-            sowing_ws["earliest-date"] = "{:04d}-{:02d}-{:02d}".format(s.year, s.month, s.day)
+            sowing_ws["earliest-date"] = f"{s.year:04d}-{s.month:02d}-{s.day:02d}"
         if ilr._has("latestSowing"):
             s = ilr.latestSowing
-            sowing_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(s.year, s.month, s.day)
+            sowing_ws["latest-date"] = f"{s.year:04d}-{s.month:02d}-{s.day:02d}"
 
         harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
         if ilr._has("harvest"):
             h = ilr.harvest
-            harvest_ws["date"] = "{:04d}-{:02d}-{:02d}".format(h.year, h.month, h.day)
+            harvest_ws["date"] = f"{h.year:04d}-{h.month:02d}-{h.day:02d}"
         if ilr._has("latestHarvest"):
             h = ilr.latestHarvest
-            harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(h.year, h.month, h.day)
+            harvest_ws["latest-date"] = f"{h.year:04d}-{h.month:02d}-{h.day:02d}"
 
         #env_template["params"]["siteParameters"]["heightNN"] = height_nn
         #env_template["params"]["siteParameters"]["slope"] = slope / 100.0
         env_template["params"]["siteParameters"]["Latitude"] = llcoord.lat
 
-        #env_template[
-        #    "pathToClimateCSV"] = "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/dwd/csvs/germany/row-0/col-181.csv"
+        env_template["pathToClimateCSV"] = str(PATH_TO_REPO / f"data/Results_{year}/result_{id:05d}_{year}.csv")
+        if not os.path.exists(env_template["pathToClimateCSV"]):
+            continue
 
         env_template["customId"] = {
-            "setup_id": setup.runId,
             "id": id,
-            "crop_id": setup.cropId,
             "lat": llcoord.lat, "lon": llcoord.lon
         }
 
         capnp_env = model_capnp.Env.new_message()
-        capnp_env.timeSeries = timeseries
+        if timeseries:
+            capnp_env.timeSeries = timeseries
         #capnp_env.soilProfile = soil_profile
         capnp_env.rest = common_capnp.StructuredText.new_message(value=json.dumps(env_template),
                                                                  structure={"json": None})
 
-        out_ip = common_capnp.IP.new_message(content=capnp_env, attributes=[{"key": "id", "value": id}])
-        ports["out"].write(value=out_ip).wait()
-
+        #out_ip = fbp_capnp.IP.new_message(content=capnp_env, attributes=[{"key": "id", "value": id}])
+        #ports["out"].write(value=out_ip).wait()
+        ports["out"].write(value=fbp_capnp.IP.new_message(
+            content=model_capnp.Env.new_message(
+                rest=common_capnp.StructuredText.new_message(
+                    value=json.dumps(env_template),
+                    structure={"json": None})))).wait()
 
     except Exception as e:
         print(f"{os.path.basename(__file__)} Exception :", e)

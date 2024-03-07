@@ -59,6 +59,13 @@
 
 	"UseNMinMineralFertilisingMethod": false,
 	"NMinUserParams": { "min": 40, "max": 120, "delayInDays": 10 },
-	"NMinFertiliserPartition": ["include-from-file", "mineral-fertilisers/AN.json"],
+	"NMinFertiliserPartition": {
+		"Carbamid": 0,
+		"NH4": 0.5,
+		"NO3": 0.5,
+		"id": "AN",
+		"name": "Ammonium Nitrate",
+		"type": "MineralFertiliserParameters"
+	},
 	"JulianDayAutomaticFertilising": 89
 }

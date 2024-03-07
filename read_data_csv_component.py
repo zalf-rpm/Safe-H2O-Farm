@@ -24,7 +24,7 @@ import os
 from pathlib import Path
 import sys
 
-PATH_TO_REPO = Path(os.path.realpath(__file__)).parent.parent
+PATH_TO_REPO = Path(os.path.realpath(__file__)).parent
 PATH_TO_MAS_INFRASTRUCTURE_REPO = PATH_TO_REPO / "../mas-infrastructure"
 PATH_TO_PYTHON_CODE = PATH_TO_MAS_INFRASTRUCTURE_REPO / "src/python"
 if str(PATH_TO_PYTHON_CODE) not in sys.path:
@@ -36,14 +36,14 @@ from pkgs.common import fbp
 PATH_TO_CAPNP_SCHEMAS = (PATH_TO_MAS_INFRASTRUCTURE_REPO / "capnproto_schemas").resolve()
 abs_imports = [str(PATH_TO_CAPNP_SCHEMAS)]
 fbp_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "fbp.capnp"), imports=abs_imports)
-mgmt_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "models/monica/monica_management.capnp"), imports=abs_imports)
-geo_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "geo_coord.capnp"), imports=abs_imports)
+mgmt_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "model/monica/monica_management.capnp"), imports=abs_imports)
+geo_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "geo.capnp"), imports=abs_imports)
 
 config = {
     "path_to_data_dir": str(PATH_TO_REPO / "data"),
     "years": "[2018]",
     "years_in_sr": None,  # "[2018]" :string of json serialized list of years
-    "out_sr": "",  # {country_id: {year: yield}} :string of json serialized mapping from country id to year to yield
+    "out_sr": None,  # empty IP with attributes: ilr, soil, latlon
 }
 common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
 ports, close_out_ports = fbp.connect_ports(config)
@@ -51,11 +51,11 @@ ports, close_out_ports = fbp.connect_ports(config)
 # get default country ids
 years = json.loads(config["years"])
 
-while ports["year"] and ports["out"]:
+while ports["years"] and ports["out"]:
     try:
-        msg = ports["year"].read().wait()
+        msg = ports["years"].read().wait()
         if msg.which() == "done":
-            ports["year"] = None
+            ports["years"] = None
             continue
         else:
             years_ip = msg.value.as_struct(fbp_capnp.IP)
@@ -67,7 +67,7 @@ while ports["year"] and ports["out"]:
 
         for year in years:
             data = {}
-            with open(config["path_to_data"]) as file:
+            with open(f"{config['path_to_data_dir']}/{year}_MONICA.csv") as file:
                 dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
                 file.seek(0)
                 reader = csv.reader(file, dialect)
@@ -75,7 +75,7 @@ while ports["year"] and ports["out"]:
                 for line in reader:
                     row = {}
                     id = None
-                    for i, value in enumerate(row):
+                    for i, value in enumerate(line):
                         if header[i].lower() == "id":
                             id = value
                         if value == "":
@@ -84,12 +84,10 @@ while ports["year"] and ports["out"]:
                             row[header[i]] = value
                     data[id] = row
 
-            for site in data:
+            for id, site in data.items():
                 year = int(site["year"])
-                sowing_doy = int(site["transplant"])
-                sd = date(year, 1, 1) + timedelta(days=sowing_doy-1)
-                harvest_doy = int(site["harvesting"])
-                hd = date(year, 1, 1) + timedelta(days=harvest_doy-1)
+                sd = date.fromisoformat(site["transplant_date"])
+                hd = date.fromisoformat(site["harvesting_date"])
                 ilr = mgmt_capnp.ILRDates.new_message(
                     sowing={"year": year, "month": sd.month, "day": sd.day},
                     harvest={"year": year, "month": hd.month, "day": hd.month}
@@ -112,8 +110,9 @@ while ports["year"] and ports["out"]:
                     {"key": "ilr", "value": ilr},
                     {"key": "soil", "value": json.dumps(soil_profile)},
                     {"key": "latlon", "value": geo_capnp.LatLonCoord.new_message(
-                        lat=float(site["latitude"]), lon=0.0)}
-
+                        lat=float(site["latitude"]), lon=0.0)},
+                    {"key": "id", "value": str(id)},
+                    {"key": "year", "value": str(year)},
                 ])
 
                 ports["out"].write(value=out_ip).wait()
