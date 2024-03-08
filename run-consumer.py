@@ -22,14 +22,30 @@ import zmq
 
 import shared
 
+PATHS = {
+    "local": {
+        "path-to-output-dir": "out/",
+    },
+    "remoteConsumer-remoteMonica": {
+        "path-to-output-dir": "/out/",
+    }
+}
 
 def run_consumer(server = {"server": None, "port": None}):
 
     config = {
+        "mode": "local",
         "port": server["port"] if server["port"] else "7777",
         "server": server["server"] if server["server"] else "localhost",
-        "path_to_out_file": os.path.join(os.path.dirname(__file__), "out/out.csv"),
+        "path_to_out_file": "out.csv",
     }
+    
+    path = PATHS[mode]
+    outPath = path["path-to-output-dir"]
+    if path["path-to-output-dir"][0] != "/" :
+      outPath = os.path.join(os.path.dirname(__file__), outPath)
+    config["path_to_out_file"] = os.path.join(outPath, config["path_to_out_file"])
+
     shared.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
 
     context = zmq.Context()
