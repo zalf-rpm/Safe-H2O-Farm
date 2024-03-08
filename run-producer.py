@@ -35,7 +35,7 @@ PATHS = {
     },
 
     "remoteProducer-remoteMonica": {
-        "monica_path_to_climate_dir": "/project/climate_data",
+        "monica_path_to_climate_dir": "/data",
         "path_to_data_dir": "./data/",  # mounted path to archive or hard drive with data
     }
 }
