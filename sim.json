@@ -25,7 +25,8 @@
 	  	"write-file?": true,
 		"path-to-output": "./",
 		"file-name": "sim-out.csv",
-	
+		"obj-outputs?": true,
+
 		"csv-options": {
 			"include-header-row": true,
 			"include-units-row": true,

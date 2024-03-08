@@ -1,0 +1,116 @@
+{
+  "version": "0.1",
+  "name": "",
+  "components": "/home/berg/GitHub/mas-infrastructure/src/csharp/BlazorDrawFBP/Data/components.json",
+  "nodes": [
+    {
+      "node_id": "425da9fb-7ea3-48fa-b0f1-d1bae1afc033",
+      "process_name": "create MONICA env",
+      "location": {
+        "x": 433.5,
+        "y": 250.0
+      },
+      "editable": false,
+      "parallel_processes": 1,
+      "data": {
+        "cmd_params": {}
+      },
+      "component_id": "create_env_component.py"
+    },
+    {
+      "node_id": "be0f5138-786b-4e23-b846-211eb9591de4",
+      "process_name": "MONICA(s)",
+      "location": {
+        "x": 918.5,
+        "y": 251.89749999999998
+      },
+      "editable": false,
+      "parallel_processes": 1,
+      "data": {
+        "cmd_params": {}
+      },
+      "component_id": "monica-fbp-component"
+    },
+    {
+      "node_id": "d9221130-84bd-41db-b071-123623940a70",
+      "process_name": "read data from csv file",
+      "location": {
+        "x": -37.5,
+        "y": 252.0
+      },
+      "editable": false,
+      "parallel_processes": 1,
+      "data": {
+        "cmd_params": {}
+      },
+      "component_id": "read_data_csv_component.py"
+    },
+    {
+      "node_id": "382fa724-39a4-4634-94ac-775eace0eb1d",
+      "component_id": "IIP",
+      "location": {
+        "x": -284.5,
+        "y": 96.0
+      },
+      "data": {
+        "content": "2018"
+      }
+    },
+    {
+      "node_id": "ec23d082-d2e4-4d0b-8cd5-f2dd2636917d",
+      "process_name": "write MONICA csv",
+      "location": {
+        "x": 1429.5,
+        "y": 255.0
+      },
+      "editable": false,
+      "parallel_processes": 1,
+      "data": {
+        "cmd_params": {}
+      },
+      "component_id": "write_monica_csv.py"
+    }
+  ],
+  "links": [
+    {
+      "source": {
+        "node_id": "d9221130-84bd-41db-b071-123623940a70",
+        "port": "out"
+      },
+      "target": {
+        "node_id": "425da9fb-7ea3-48fa-b0f1-d1bae1afc033",
+        "port": "in"
+      }
+    },
+    {
+      "source": {
+        "node_id": "425da9fb-7ea3-48fa-b0f1-d1bae1afc033",
+        "port": "out"
+      },
+      "target": {
+        "node_id": "be0f5138-786b-4e23-b846-211eb9591de4",
+        "port": "env"
+      }
+    },
+    {
+      "source": {
+        "node_id": "be0f5138-786b-4e23-b846-211eb9591de4",
+        "port": "result"
+      },
+      "target": {
+        "node_id": "ec23d082-d2e4-4d0b-8cd5-f2dd2636917d",
+        "port": "in"
+      }
+    },
+    {
+      "source": {
+        "node_id": "382fa724-39a4-4634-94ac-775eace0eb1d",
+        "port": "Bottom"
+      },
+      "target": {
+        "node_id": "d9221130-84bd-41db-b071-123623940a70",
+        "port": "years"
+      }
+    }
+  ]
+}
