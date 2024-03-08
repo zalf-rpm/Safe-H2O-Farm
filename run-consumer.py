@@ -42,7 +42,7 @@ def run_consumer(server = {"server": None, "port": None}):
     
     path = PATHS[config["mode"]]
     outPath = path["path-to-output-dir"]
-    if path["path-to-output-dir"][0] != "/" :
+    if not path["path-to-output-dir"].startswith("/") :
       outPath = os.path.join(os.path.dirname(__file__), outPath)
     config["path_to_out_file"] = os.path.join(outPath, config["path_to_out_file"])
 
