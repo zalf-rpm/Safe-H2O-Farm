@@ -79,7 +79,6 @@ def run_producer(server = {"server": None, "port": None}, shared_id = None):
     })
 
     years = json.loads(config["run-setups"])
-    print(years)
     for year in years:
         data = {}
         csvPath = f"{paths['path_to_data_dir']}/{year}_MONICA.csv"
@@ -111,6 +110,7 @@ def run_producer(server = {"server": None, "port": None}, shared_id = None):
             env_template["pathToClimateCSV"] = \
                 f"{paths['monica_path_to_climate_dir']}/Results_{year}/result_{climate_id:05d}_{year}.csv"
             if not os.path.exists(env_template["pathToClimateCSV"]):
+                print("path does not exist: ", env_template["pathToClimateCSV"])
                 continue
 
             sowing_ws = env_template["cropRotation"][0]["worksteps"][0]
