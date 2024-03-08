@@ -40,7 +40,7 @@ def run_consumer(server = {"server": None, "port": None}):
         "path_to_out_file": "out.csv",
     }
     
-    path = PATHS[mode]
+    path = PATHS[config["mode"]]
     outPath = path["path-to-output-dir"]
     if path["path-to-output-dir"][0] != "/" :
       outPath = os.path.join(os.path.dirname(__file__), outPath)
