@@ -39,14 +39,15 @@ def run_consumer(server = {"server": None, "port": None}):
         "server": server["server"] if server["server"] else "localhost",
         "path_to_out_file": "out.csv",
     }
+
+    shared.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
     
     path = PATHS[config["mode"]]
     outPath = path["path-to-output-dir"]
-    if not path["path-to-output-dir"].startswith("/") :
-      outPath = os.path.join(os.path.dirname(__file__), outPath)
+    if not outPath.startswith("/") :
+        outPath = os.path.join(os.path.dirname(__file__), outPath)
     config["path_to_out_file"] = os.path.join(outPath, config["path_to_out_file"])
-
-    shared.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
+    print("Output path:", config["path_to_out_file"])
 
     context = zmq.Context()
     socket = context.socket(zmq.PULL)
