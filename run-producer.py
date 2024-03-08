@@ -79,11 +79,12 @@ def run_producer(server = {"server": None, "port": None}, shared_id = None):
     })
 
     years = json.loads(config["run-setups"])
+    print(years)
     for year in years:
         data = {}
         csvPath = f"{paths['path_to_data_dir']}/{year}_MONICA.csv"
-        if not os.path.exists(csvPath) :
-            print("path does not exist:", csvPath)
+        print("CSV path:", csvPath)
+
         with open(csvPath) as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
             file.seek(0)
