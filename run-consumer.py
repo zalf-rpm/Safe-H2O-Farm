@@ -64,7 +64,7 @@ def run_consumer(server = {"server": None, "port": None}):
             exit(1)
 
     filepath = config["path_to_out_file"]
-    with open(filepath, "wt") as _:
+    with open(filepath, "wt", newline='', encoding='utf-8') as _:
         writer = csv.writer(_, delimiter=",")
         writer.writerow(["id", "year", "yield", "climate_id"])
         writer.writerow(["", "", "[kg/ha]", ""])
