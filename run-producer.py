@@ -30,7 +30,7 @@ PATHS = {
         "path_to_data_dir": "./data",
     },
     "local-local": {
-        "monica_path_to_climate_dir": "/home/berg/GitHub/Safe-H2O-Farm/data",
+        "monica_path_to_climate_dir": "./data",
         "path_to_data_dir": "./data/",
     },
 
