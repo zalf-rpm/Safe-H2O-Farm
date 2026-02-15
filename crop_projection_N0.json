@@ -1,0 +1,38 @@
+  {
+	"crops": {
+		"TO": {
+			"is-winter-crop": false,
+			"cropParams": {
+				"species": ["include-from-file", "crops/species/tomato.json"],
+				"cultivar": ["include-from-file", "crops/cultivars/field-tomato.json"]
+			},
+			"residueParams": ["include-from-file", "crops/residues/tomato.json"]
+		}
+	},
+	"fert-params": {
+		"AN": ["include-from-file", "mineral-fertilisers/AN.json"]
+	}, 	
+	"cropRotationTemplates": {
+		"TO": [{
+			"worksteps": [
+				{
+					"date": "0000-05-28",
+					"type": "Sowing",
+					"crop": ["ref", "crops", "TO"]
+				},
+
+				{
+					"date": "0000-09-03",
+					"type": "Harvest"
+				}
+			]
+		}]
+	},
+
+	"cropRotation": ["ref", "cropRotationTemplates", "TO"],
+	
+	"CropParameters": {
+		"=": ["include-from-file", "general/crop.json"],
+		"__enable_vernalisation_factor_fix__": true
+	}
+}

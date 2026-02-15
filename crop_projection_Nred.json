@@ -1,0 +1,73 @@
+  {
+	"crops": {
+		"TO": {
+			"is-winter-crop": false,
+			"cropParams": {
+				"species": ["include-from-file", "crops/species/tomato.json"],
+				"cultivar": ["include-from-file", "crops/cultivars/field-tomato.json"]
+			},
+			"residueParams": ["include-from-file", "crops/residues/tomato.json"]
+		}
+	},
+	"fert-params": {
+		"AN": ["include-from-file", "mineral-fertilisers/AN.json"]
+	}, 	
+	"cropRotationTemplates": {
+		"TO": [{
+			"worksteps": [
+				{
+					"date": "0000-05-28",
+					"type": "Sowing",
+					"crop": ["ref", "crops", "TO"]
+				},
+				{
+					"date": "0000-06-07",
+					"type": "MineralFertilization",
+					"amount": [21, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-07-06",
+					"type": "MineralFertilization",
+					"amount": [21, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-07-12",
+					"type": "MineralFertilization",
+					"amount": [24.5, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-07-19",
+					"type": "MineralFertilization",
+					"amount": [24.5, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-07-26",
+					"type": "MineralFertilization",
+					"amount": [24.5, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-08-02",
+					"type": "MineralFertilization",
+					"amount": [24.5, "kg N"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+				{
+					"date": "0000-09-03",
+					"type": "Harvest"
+				}
+			]
+		}]
+	},
+
+	"cropRotation": ["ref", "cropRotationTemplates", "TO"],
+	
+	"CropParameters": {
+		"=": ["include-from-file", "general/crop.json"],
+		"__enable_vernalisation_factor_fix__": true
+	}
+}

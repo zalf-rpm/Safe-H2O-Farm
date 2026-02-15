@@ -1,7 +1,7 @@
 {  
-  "Carbamid":0,
-  "NH4":0.5,
-  "NO3":0.5,
+  "Carbamid":0.46,
+  "NH4":0.31,
+  "NO3":0.23,
   "id":"AN",
   "name":"Ammonium Nitrate",
   "type":"MineralFertiliserParameters"
