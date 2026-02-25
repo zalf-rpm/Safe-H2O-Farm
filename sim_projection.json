@@ -44,7 +44,7 @@
 				["NLeach", "SUM"],
 				["SumNUp", "LAST"],
 				["Irrig", "SUM"],
-				["SOC|SOC-sum3", [1, 3, "SUM"], "SUM"]
+				["SOC|SOC-sum3", [1, 3, "SUM"], "LAST"]
 			],
 
 			{"while": ["Stage", "=", 3]},[
