@@ -58,7 +58,7 @@
 				["CM-count", "FIRST"],
 				["Year", "FIRST"],
 				["Crop", "FIRST"],
-				["DOY|DOY-3", "FIRST"]
+				["DOY|DOY-4", "FIRST"]
 			],
 
 			"_daily", [
