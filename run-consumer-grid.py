@@ -85,8 +85,8 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "SumNUp": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Irrig": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "SOC-sum3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "DOY-3": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
-        "DOY-4": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
+        "DOY-3": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
+        # "DOY-4": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
 
     }
     output_keys = list(output_grids.keys())
