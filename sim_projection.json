@@ -44,7 +44,14 @@
 				["NLeach", "SUM"],
 				["SumNUp", "LAST"],
 				["Irrig", "SUM"],
-				["SOC|SOC-sum3", [1, 3, "SUM"], "LAST"]
+				["SOC|SOC-sum3", [1, 3, "SUM"], "LAST"],
+				["Precip", "SUM"],
+				["TempSum", "LAST"],
+				["Tmin", "AVG"],
+				["Tavg", "AVG"],
+				["Tmax", "AVG"],
+				["Evapotranspiration", "SUM"]
+
 			],
 
 			{"while": ["Stage", "=", 3]},[
