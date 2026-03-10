@@ -50,7 +50,8 @@
 				["Tmin", "AVG"],
 				["Tavg", "AVG"],
 				["Tmax", "AVG"],
-				["Evapotranspiration", "SUM"]
+				["Evapotranspiration", "SUM"],
+				["AtmCO2", "AVG"]
 
 			],
 
