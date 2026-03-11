@@ -378,8 +378,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 if setup["latitude"]:
                     env_template["params"]["siteParameters"]["Latitude"] = float(slat)
 
+                # if setup["CO2"]:
+                #     env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = float(setup["CO2"])
+
                 if setup["CO2s"]:
-                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = float(setup["CO2s"])
+                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = json.loads(setup["CO2s"])
 
                 if setup["FieldConditionModifier"]:
                     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
