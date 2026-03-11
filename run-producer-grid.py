@@ -237,8 +237,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         with open(setup.get("site.json", config["site.json"])) as _:
             site_json = json.load(_)
 
-        if len(scenario) > 0 and scenario[:3].lower() == "rcp":
-            site_json["EnvironmentParameters"]["rcp"] = scenario
+        rcp = setup["rcp"]
+        if len(rcp) > 0 and rcp[:3].lower() == "rcp":
+            site_json["EnvironmentParameters"]["rcp"] = rcp
 
         # read template crop.json
         with open(setup.get("crop.json", config["crop.json"])) as _:
@@ -376,6 +377,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 if setup["latitude"]:
                     env_template["params"]["siteParameters"]["Latitude"] = float(slat)
+
+                if setup["CO2"]:
+                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2"] = float(setup["CO2"])
 
                 if setup["FieldConditionModifier"]:
                     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
