@@ -237,9 +237,27 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         with open(setup.get("site.json", config["site.json"])) as _:
             site_json = json.load(_)
 
-        # rcp = setup["rcp"]
-        # if len(rcp) > 0 and rcp[:3].lower() == "rcp":
-        #     site_json["EnvironmentParameters"]["rcp"] = rcp
+        climate_scenario = scenario
+
+        # Map of SSP scenarios to corresponding RCP scenarios
+        ssp_to_rcp = {
+            "ssp119": "rcp19",
+            "ssp126": "rcp26",
+            "ssp245": "rcp45",
+            "ssp460": "rcp60",
+            "ssp370": "rcp70",
+            "ssp585": "rcp85"
+        }
+
+        rcp_scenario = climate_scenario.lower()
+
+        if rcp_scenario:
+            # Convert SSP to RCP if needed
+            if rcp_scenario in ssp_to_rcp:
+                rcp_scenario = ssp_to_rcp[rcp_scenario]
+
+            if rcp_scenario.startswith("rcp"):
+                site_json["EnvironmentParameters"]["rcp"] = rcp_scenario
 
         # read template crop.json
         with open(setup.get("crop.json", config["crop.json"])) as _:
@@ -381,8 +399,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # if setup["CO2"]:
                 #     env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = float(setup["CO2"])
 
-                if setup["CO2s"]:
-                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = json.loads(setup["CO2s"])
+                # if setup["CO2s"]:
+                #     env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = json.loads(setup["CO2s"])
 
                 if setup["FieldConditionModifier"]:
                     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
@@ -398,7 +416,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
 
-                subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=scenario, ensmem=ensmem,
+                subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=climate_scenario, ensmem=ensmem,
                                                                   version=version, crow=str(int(crow)), ccol=str(int(ccol)))
                 for _ in range(4):
                     subpath_to_csv = subpath_to_csv.replace("//", "/")
