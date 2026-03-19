@@ -324,6 +324,29 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         sent_env_count += 1
                     continue
 
+                if soil_id in soil_id_cache:
+                    soil_profile = soil_id_cache[soil_id]
+                else:
+                    soil_profile = it_soil_io3.soil_parameters(soil_db_con, soil_id)
+                    soil_id_cache[soil_id] = soil_profile
+
+                if len(soil_profile) == 0:
+                    # print("row/col:", srow, "/", scol, "has unknown soil_id:", soil_id)
+                    # unknown_soil_ids.add(soil_id)
+
+                    env_template["customId"] = {
+                        "setup_id": setup_id,
+                        "srow": srow, "scol": scol,
+                        "soil_id": soil_id,
+                        "env_id": sent_env_count,
+                        "nodata": True,
+                    }
+                    if not DEBUG_DONOT_SEND:
+                        socket.send_json(env_template)
+                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                        sent_env_count += 1
+                    continue
+
                 # get coordinate of closest climate element of real soil-cell
                 sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
                 sr = xllcorner + (scellsize / 2) + scol * scellsize
@@ -346,30 +369,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 continue
                 """
 
-                if soil_id in soil_id_cache:
-                    soil_profile = soil_id_cache[soil_id]
-                else:
-                    soil_profile = it_soil_io3.soil_parameters(soil_db_con, soil_id)
-                    soil_id_cache[soil_id] = soil_profile
+
 
                 worksteps = env_template["cropRotation"][0]["worksteps"]
-
-                if len(soil_profile) == 0:
-                    # print("row/col:", srow, "/", scol, "has unknown soil_id:", soil_id)
-                    # unknown_soil_ids.add(soil_id)
-
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
-                    continue
 
                 if dem_crs not in tcoords:
                     tcoords[dem_crs] = soil_crs_to_x_transformers[dem_crs].transform(sr, sh)
