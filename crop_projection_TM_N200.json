@@ -20,7 +20,7 @@
 				{
 					"date": "0000-04-15",
 					"type": "OrganicFertilization",
-					"amount": [4710, "kg"],
+					"amount": [5640, "kg"],
 					"parameters": ["ref", "fert-params", "WEEDS"],
 					"incorporation": true
 				  },
