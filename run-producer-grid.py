@@ -404,9 +404,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # if setup["CO2s"]:
                 #     env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2s"] = json.loads(setup["CO2s"])
 
-                if setup["FieldConditionModifier"]:
-                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
-                        "FieldConditionModifier"] = float(setup["FieldConditionModifier"])
+                # if setup["FieldConditionModifier"]:
+                #     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
+                #         "FieldConditionModifier"] = float(setup["FieldConditionModifier"])
 
                 env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup["fertilization"]
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
