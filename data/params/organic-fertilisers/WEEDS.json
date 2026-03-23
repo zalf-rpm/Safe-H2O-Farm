@@ -34,7 +34,7 @@
     "",
     "C to N ratio of the slowly decomposing AOM pool"
   ],
-  "NConcentration":0.0592,
+  "NConcentration":0.0319,
   "PartAOM_Slow_to_SMB_Fast":[  
     0.5,
     "kg kg-1",
