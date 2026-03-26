@@ -60,7 +60,7 @@
     "°C d"
   ],
   "CriticalTemperatureHeatStress":[  
-    28,
+    31,
     "°C"
   ],
   "CropHeightP1":6,
@@ -107,13 +107,13 @@
   ],
   "OptimumTemperature":[  
     [  
-      28,
-      28,
-      28,
-      28,
-      28,
-      28,
-      28
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
     ],
     "°C"
   ],
