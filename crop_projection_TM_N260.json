@@ -37,6 +37,13 @@
 					"partition": ["ref", "fert-params", "AN"]
 				},
 
+				{
+					"date": "0000-06-28",
+					"type": "MineralFertilization",
+					"amount": [6, "kg N"],
+					"partition": ["ref", "fert-params", "AN"]
+				},
+
 				  {
 					"date": "0000-07-09",
 					"type": "MineralFertilization",
