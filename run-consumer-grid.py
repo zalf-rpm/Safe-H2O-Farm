@@ -87,8 +87,8 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "Irrig": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "SOC-sum3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
         # "SOC-X-Y": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
-        "TempSum": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TempSum": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         
         # "DOY-3": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-4": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
