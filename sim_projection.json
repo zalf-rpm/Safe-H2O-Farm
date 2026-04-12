@@ -44,7 +44,7 @@
 				["NLeach", "SUM"],
 				["SumNUp", "LAST"],
 				["Irrig", "SUM"],
-				["SOC|SOC-sum3", [1, 3, "SUM"], "LAST"],
+				["SOC|SOC-avg3", [1, 3, "AVG"], "LAST"],
 				["SOC-X-Y", [1, 3, "SUM"], "LAST"],
 				["Precip", "SUM"],
 				["TempSum", "LAST"],
