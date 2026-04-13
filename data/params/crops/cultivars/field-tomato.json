@@ -90,7 +90,7 @@
     0.80000000000000004
   ],
   "EndSensitivePhaseHeatStress":[  
-    1000,
+    1200,
     "°C d"
   ],
   "FrostDehardening":0,
