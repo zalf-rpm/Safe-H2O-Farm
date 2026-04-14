@@ -38,7 +38,7 @@
     0
   ],
   "InitialRootingDepth":0.10000000149011612,
-  "LimitingTemperatureHeatStress":40,
+  "LimitingTemperatureHeatStress":55,
   "LuxuryNCoeff":1.1000000238418579,
   "MaxCropDiameter":0.004999999888241291,
   "MaxNUptakeParam":3.1449999809265137,
