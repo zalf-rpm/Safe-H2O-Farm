@@ -5,7 +5,7 @@
     true,
     true
   ],
-  "AssimilateReallocation":0.010,
+  "AssimilateReallocation":0.30000001192092896,
   "BaseTemperature":[  
     10,
     10,
@@ -37,7 +37,7 @@
     0,
     0
   ],
-  "InitialRootingDepth":0.10000000149011612,
+  "InitialRootingDepth":0.102278,
   "LimitingTemperatureHeatStress":35,
   "LuxuryNCoeff":1.1000000238418579,
   "MaxCropDiameter":0.004999999888241291,
@@ -66,7 +66,7 @@
   "RootDistributionParam":0.0027870000340044498,
   "RootFormFactor":3,
   "RootGrowthLag":-30,
-  "RootPenetrationRate":0.01,
+  "RootPenetrationRate":0.00741571,
   "SamplingDepth":0.89999997615814209,
   "SpeciesName":"tomato",
   "SpecificRootLength":300,
