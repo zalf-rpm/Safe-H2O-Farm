@@ -53,7 +53,8 @@
 				["Tavg", "AVG"],
 				["Tmax", "AVG"],
 				["Evapotranspiration", "SUM"],
-				["AtmCO2", "AVG"]
+				["AtmCO2", "AVG"],
+				["HeatRed", "MIN"]
 
 			],
 
@@ -75,7 +76,7 @@
 				["CM-count", "FIRST"],
 				["Year", "FIRST"],
 				["Crop", "FIRST"],
-				["HeatRed", "MIN"]
+				["HeatRed|HeatRed-3", "MIN"]
 			],
 
 			"_daily", [
