@@ -72,12 +72,6 @@
 				["DOY|DOY-4", "FIRST"]
 			],
 
-			{"while": ["Stage", "=", 3]},[
-				["CM-count", "FIRST"],
-				["Year", "FIRST"],
-				["Crop", "FIRST"],
-				["HeatRed|HeatRed-3", "MIN"]
-			],
 
 			"_daily", [
 				"Date",
