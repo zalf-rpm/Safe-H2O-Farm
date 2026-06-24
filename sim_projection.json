@@ -75,7 +75,7 @@
 				["CM-count", "FIRST"],
 				["Year", "FIRST"],
 				["Crop", "FIRST"],
-				["HeatRed", "AVG"]
+				["HeatRed", "MIN"]
 			],
 
 			"_daily", [
