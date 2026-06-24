@@ -53,7 +53,8 @@
 				["Tavg", "AVG"],
 				["Tmax", "AVG"],
 				["Evapotranspiration", "SUM"],
-				["AtmCO2", "AVG"]
+				["AtmCO2", "AVG"],
+				["HeatRed", "MIN"]
 
 			],
 
@@ -71,12 +72,6 @@
 				["DOY|DOY-4", "FIRST"]
 			],
 
-			{"while": ["Stage", "=", 3]},[
-				["CM-count", "FIRST"],
-				["Year", "FIRST"],
-				["Crop", "FIRST"],
-				["HeatRed", "AVG"]
-			],
 
 			"_daily", [
 				"Date",
