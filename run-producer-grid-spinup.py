@@ -290,14 +290,16 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_spinup_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = use_vernalisation_fix
         crop_projection_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = use_vernalisation_fix
 
-        spinup_rotation = expand_crop_rotation_template(crop_spinup_json, crop_id, 1975, 2014)
+        # spinup_rotation = expand_crop_rotation_template(crop_spinup_json, crop_id, 1975, 2014)
+        # spinup period setup
+        spinup_rotation = expand_crop_rotation_template(crop_spinup_json, crop_id, 1935, 1974)
 
         projection_file = setup.get("crop-projection.json", config["crop-projection.json"])
 
         if "cover" in projection_file:
-            projection_rotation = expand_crop_rotation_template(crop_projection_json, crop_id, 2014, 2099)
+            projection_rotation = expand_crop_rotation_template(crop_projection_json, crop_id, 1974, 2099)
         else:
-            projection_rotation = expand_crop_rotation_template(crop_projection_json, crop_id, 2015, 2100)
+            projection_rotation = expand_crop_rotation_template(crop_projection_json, crop_id, 1975, 2100)
 
         crop_json = copy.deepcopy(crop_projection_json)
         crop_json["cropRotation"] = spinup_rotation + projection_rotation
