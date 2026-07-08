@@ -89,17 +89,6 @@
 	"EmergenceMoistureControlOn": false,
 	"EmergenceFloodingControlOn": false,
 
-	"UseAutomaticIrrigation": true,
-	"AutoIrrigationParams": {
-		"irrigationParameters": {
-			"nitrateConcentration": [0, "mg dm-3"],
-			"sulfateConcentration": [0, "mg dm-3"]
-		},
-		"amount": [20, "mm"],
-		"threshold": 0.75,
-		"calc_nFC_until_depth_m": [0.3, "m"]
-	},
-
 	"UseNMinMineralFertilisingMethod": false,
 	"NMinUserParams": { "min": 40, "max": 120, "delayInDays": 10 },
 	"NMinFertiliserPartition": {
