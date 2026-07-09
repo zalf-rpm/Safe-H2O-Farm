@@ -63,7 +63,7 @@
 				{
 					"date": "0001-06-28",
 					"type": "MineralFertilization",
-					"amount": [6, "kg N"],
+					"amount": [7, "kg N"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
 				{
