@@ -16,6 +16,21 @@
 		"TO": [{
 			"worksteps": [
 				{
+					"type": "AutomaticIrrigation",
+					"irrigateCrop": true,
+					"parameters": {
+						"startDate": "0000-05-28",
+						"endDate": "0000-09-03",
+						"irrigationParameters": {
+							"nitrateConcentration": [0, "mg dm-3"],
+							"sulfateConcentration": [0, "mg dm-3"]
+						},
+						"amount": [20, "mm"],
+						"threshold": 0.75,
+						"calc_nFC_until_depth_m": [0.3, "m"]
+					}
+				},
+				{
 					"date": "0000-05-28",
 					"type": "Sowing",
 					"crop": ["ref", "crops", "TO"]
