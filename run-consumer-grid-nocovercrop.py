@@ -22,6 +22,8 @@ import os
 from pyproj import CRS, Transformer
 import sys
 import zmq
+import tarfile
+import shutil
 
 import monica_io3
 import monica_run_lib as Mrunlib
@@ -52,20 +54,28 @@ def create_output(msg):
     cm_count_to_vals = defaultdict(dict)
     for data in msg.get("data", []):
         results = data.get("results", [])
+        orig_spec = data.get("origSpec", "")
 
-        is_daily_section = data.get("origSpec", "") == '"daily"'
+        # is_daily_section = data.get("origSpec", "") == '"daily"'
+
+        if orig_spec != '"crop"':
+            continue
 
         for vals in results:
             if "CM-count" in vals:
                 cm_count_to_vals[vals["CM-count"]].update(vals)
-            elif is_daily_section:
-                cm_count_to_vals[vals["Date"]].update(vals)
+            # elif is_daily_section:
+            #     cm_count_to_vals[vals["Date"]].update(vals)
 
-    cmcs = list(cm_count_to_vals.keys())
-    cmcs.sort()
-    last_cmc = cmcs[-1]
-    if "Year" not in cm_count_to_vals[last_cmc]:
-        cm_count_to_vals.pop(last_cmc)
+    # cmcs = list(cm_count_to_vals.keys())
+    # cmcs.sort()
+    # last_cmc = cmcs[-1]
+    # if "Year" not in cm_count_to_vals[last_cmc]:
+    #     cm_count_to_vals.pop(last_cmc)
+
+    for cmc in list(cm_count_to_vals.keys()):
+        if "Year" not in cm_count_to_vals[cmc]:
+            cm_count_to_vals.pop(cmc)
 
     return cm_count_to_vals
 
@@ -88,15 +98,14 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "SOC-avg3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
         # "SOC-sum3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
         # "SOC-X-Y": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
-  
+        # "TempSum": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "HeatRed": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
 
 
         # "DOY-3": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-4": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
-        
-        # "TempSum": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+
         # "Precip": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Tmin": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Tavg": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2s},
@@ -313,7 +322,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 msg.get("customId", "")) \
                         + " next row: " + str(data["next-row"]) \
                         + " cols@row to go: " + str(data["datacell-count"][row]) + "@" + str(
-                row) + " cells_per_row: " + str(datacells_per_row[row])  # \
+                row) + " cells_per_row: " + str(datacells_per_row[row])
             # + " rows unwritten: " + str(data["row-col-data"].keys())
             # print(debug_msg)
             # debug_file.write(debug_msg + "\n")
@@ -355,9 +364,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 write_row_to_grids(data["row-col-data"], data["next-row"], data["ncols"], data["header"],
                                    path_to_out_dir, path_to_csv_out_dir, setup_id)
 
-                debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
-                    data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
-                print(debug_msg)
+                # debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
+                #     data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
+                # print(debug_msg)
                 # debug_file.write(debug_msg + "\n")
 
                 data["next-row"] += 1  # move to next row (to be written)
@@ -366,6 +375,15 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         and ((data["end_row"] < 0 and data["next-row"] > data["nrows"] - 1)
                              or (0 <= data["end_row"] < data["next-row"])):
                     process_message.setup_count += 1
+
+                    folder = os.path.join(config["out"], str(setup_id))
+                    archive = folder + ".tar.gz"
+
+                    if os.path.isdir(folder):
+                        with tarfile.open(archive, "w:gz") as tar:
+                            tar.add(folder, arcname=os.path.basename(folder))
+
+                        shutil.rmtree(folder)
 
         elif write_normal_output_files:
             if msg.get("type", "") in ["jobs-per-cell", "no-data", "setup_data"]:
@@ -398,7 +416,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     exit(1)
 
             # with open("out/out-" + str(i) + ".csv", 'wb') as _:
-            with open(path_to_out_dir + "col-" + str(col) + ".csv", "w", newline='') as _:
+            with open(path_to_out_dir + "col-" + str(col) + ".csv", "w", newline='', encoding="utf-8") as _:
 
                 writer = csv.writer(_, delimiter=",")
                 for data_ in msg.get("data", []):
@@ -413,9 +431,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                                                        include_units_row=True,
                                                                        include_time_agg=False):
                             writer.writerow(row)
-
-                        # for row in monica_io3.write_output(output_ids, results):
-                        #     writer.writerow(row)
 
                         for result in results:
                             row = []

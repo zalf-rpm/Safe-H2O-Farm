@@ -22,6 +22,8 @@ import os
 from pyproj import CRS, Transformer
 import sys
 import zmq
+import tarfile
+import shutil
 
 import monica_io3
 import monica_run_lib as Mrunlib
@@ -348,9 +350,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 write_row_to_grids(data["row-col-data"], data["next-row"], data["ncols"], data["header"],
                                    path_to_out_dir, path_to_csv_out_dir, setup_id)
 
-                debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
-                    data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
-                print(debug_msg)
+                # debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
+                #     data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
+                # print(debug_msg)
                 # debug_file.write(debug_msg + "\n")
 
                 data["next-row"] += 1  # move to next row (to be written)
@@ -359,6 +361,15 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         and ((data["end_row"] < 0 and data["next-row"] > data["nrows"] - 1)
                              or (0 <= data["end_row"] < data["next-row"])):
                     process_message.setup_count += 1
+
+                    folder = os.path.join(config["out"], str(setup_id))
+                    archive = folder + ".tar.gz"
+
+                    if os.path.isdir(folder):
+                        with tarfile.open(archive, "w:gz") as tar:
+                            tar.add(folder, arcname=os.path.basename(folder))
+
+                        shutil.rmtree(folder)
 
         elif write_normal_output_files:
             if msg.get("type", "") in ["jobs-per-cell", "no-data", "setup_data"]:
@@ -407,9 +418,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                                                        include_time_agg=False):
                             writer.writerow(row)
 
-                        # for row in monica_io3.write_output(output_ids, results):
-                        #     writer.writerow(row)
-
                         for result in results:
                             row = []
                             for output_id in output_ids:
@@ -437,7 +445,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
             # print("time to process message" + str(elapsed))
         except zmq.error.Again as _e:
             print('no response from the server (with "timeout"=%d ms) ' % socket.RCVTIMEO)
-            return
+            break
         except Exception as e:
             print("Exception:", e)
             # continue
