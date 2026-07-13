@@ -1,7 +1,7 @@
   {
 	"crops": {
 		"FP": {
-			"is-cover-crop": true,
+			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/field-pea.json"],
 				"cultivar": ["include-from-file", "crops/cultivars/24.json"]
