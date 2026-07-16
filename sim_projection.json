@@ -41,6 +41,7 @@
 				["Crop", "FIRST"],
 				["Yield", "LAST"],
 				["AbBiom", "LAST"],
+				["TotBiomN", "LAST"],
 				["NLeach", "SUM"],
 				["SumNUp", "LAST"],
 				["Irrig", "SUM"],
