@@ -105,8 +105,8 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
         # "DOY-3": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-4": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
-        # "DOY-5": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
-        "DOY-6": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
+        "DOY-5": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
+        # "DOY-6": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-7": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
 
         # "Precip": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
