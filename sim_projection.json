@@ -73,6 +73,26 @@
 				["DOY|DOY-4", "FIRST"]
 			],
 
+			{"while": ["Stage", "=", 5]},[
+				["CM-count", "FIRST"],
+				["Year", "FIRST"],
+				["Crop", "FIRST"],
+				["DOY|DOY-5", "FIRST"]
+			],	
+
+			{"while": ["Stage", "=", 6]},[
+				["CM-count", "FIRST"],
+				["Year", "FIRST"],
+				["Crop", "FIRST"],
+				["DOY|DOY-6", "FIRST"]
+			],
+
+			{"while": ["Stage", "=", 7]},[
+				["CM-count", "FIRST"],
+				["Year", "FIRST"],
+				["Crop", "FIRST"],
+				["DOY|DOY-7", "FIRST"]
+			],
 
 			"_daily", [
 				"Date",
