@@ -55,8 +55,13 @@
 				["Tmax", "AVG"],
 				["Evapotranspiration", "SUM"],
 				["AtmCO2", "AVG"],
-				["HeatRed", "MIN"]
+				["HeatRed", "MIN"],
+				["FrostRed", "MIN"]
 
+			],
+			
+			"yearly",[
+				["NLeach|NLeach-yearly", "SUM"]
 			],
 
 			{"while": ["Stage", "=", 3]},[
