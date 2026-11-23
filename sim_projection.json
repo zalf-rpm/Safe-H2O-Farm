@@ -63,7 +63,7 @@
 
 			"yearly",[
 				["NLeach|NLeach-yearly", "SUM"],
-				["PercolationRate|WDrain-yearly", 15, "SUM"]
+				["PercolationRate|WDrain-yearly", 10, "SUM"]
 			],
 
 			{"while": ["Stage", "=", 3]},[
