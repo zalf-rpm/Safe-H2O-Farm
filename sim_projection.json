@@ -43,6 +43,7 @@
 				["AbBiom", "LAST"],
 				["TotBiomN", "LAST"],
 				["NLeach", "SUM"],
+				["PercolationRate|WDrain", 10, "SUM"],
 				["SumNUp", "LAST"],
 				["Irrig", "SUM"],
 				["SOC|SOC-avg3", [1, 3, "AVG"], "LAST"],
@@ -59,9 +60,10 @@
 				["FrostRed", "MIN"]
 
 			],
-			
+
 			"yearly",[
-				["NLeach|NLeach-yearly", "SUM"]
+				["NLeach|NLeach-yearly", "SUM"],
+				["PercolationRate|WDrain-yearly", 15, "SUM"]
 			],
 
 			{"while": ["Stage", "=", 3]},[
