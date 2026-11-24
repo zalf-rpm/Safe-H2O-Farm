@@ -424,7 +424,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     subpath_to_csv = subpath_to_csv.replace("//", "/")
                 env_template["pathToClimateCSV"] = [
                     paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
-                print("pathToClimateCSV:", env_template["pathToClimateCSV"])
+                # print("pathToClimateCSV:", env_template["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
@@ -437,7 +437,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "nodata": False
                 }
 
-                print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
+                # print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
@@ -446,7 +446,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     # with open(f"out/env_{setup_id}_{sent_env_count}.json", "w") as f:
                     #     json.dump(env_template, f, indent=4)
 
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
+                    # print("sent env ", sent_env_count, " customId: ", env_template["customId"])
 
                 sent_env_count += 1
 
