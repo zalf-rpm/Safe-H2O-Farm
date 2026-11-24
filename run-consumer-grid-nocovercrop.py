@@ -51,41 +51,38 @@ USE_LANDUSE = False
 
 
 def create_output(msg):
-    cm_count_to_vals = defaultdict(dict)
-    for data in msg.get("data", []):
-        results = data.get("results", [])
-        orig_spec = data.get("origSpec", "")
+    crop_results = defaultdict(dict)
+    yearly_results = {}
+    for section in msg.get("data", []):
+        orig_spec = section.get("origSpec", "")
+        for vals in section.get("results", []):
+            if orig_spec == '"crop"' and "CM-count" in vals:
+                crop_results[vals["CM-count"]].update(vals)
+            elif orig_spec == '"yearly"' and "Year" in vals:
+                yearly_values = yearly_results.setdefault((None, vals["Year"]), {})
+                for key, value in vals.items():
+                    if key == "Year":
+                        continue
+                    if isinstance(value, list):
+                        for index, item in enumerate(value, start=1):
+                            if type(item) in (int, float):
+                                yearly_values[f"{key}_{index}"] = item
+                    elif type(value) in (int, float):
+                        yearly_values[key] = value
 
-        # is_daily_section = data.get("origSpec", "") == '"daily"'
-
-        if orig_spec != '"crop"':
-            continue
-
-        for vals in results:
-            if "CM-count" in vals:
-                cm_count_to_vals[vals["CM-count"]].update(vals)
-            # elif is_daily_section:
-            #     cm_count_to_vals[vals["Date"]].update(vals)
-
-    # cmcs = list(cm_count_to_vals.keys())
-    # cmcs.sort()
-    # last_cmc = cmcs[-1]
-    # if "Year" not in cm_count_to_vals[last_cmc]:
-    #     cm_count_to_vals.pop(last_cmc)
-
-    for cmc in list(cm_count_to_vals.keys()):
-        if "Year" not in cm_count_to_vals[cmc]:
-            cm_count_to_vals.pop(cmc)
-
-    return cm_count_to_vals
+    yearly_results.update({
+        (cm_count, vals["Year"]): vals for cm_count, vals in crop_results.items() if "Year" in vals
+    })
+    return yearly_results
 
 
-def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, path_to_csv_output_dir, setup_id):
+def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, path_to_csv_output_dir, setup_id, start_row=0):
     """write grids row by row"""
 
     if not hasattr(write_row_to_grids, "nodata_row_count"):
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
+        write_row_to_grids.yearly_files = defaultdict(set)
 
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
@@ -121,7 +118,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "AtmCO2": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
 
     }
-    output_keys = list(output_grids.keys())
+    crop_output_keys = tuple(output_grids)
 
     cmc_to_crop = {}
 
@@ -139,8 +136,15 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                     cmc_and_year_to_vals = defaultdict(lambda: defaultdict(list))
                     for cell_data in rcd_val:
                         # if we got multiple datasets per cell, iterate over them and aggregate them in the following step
-                        for cm_count, data in cell_data.items():
-                            for key in output_keys:
+                        for (cm_count, year), data in cell_data.items():
+                            if cm_count is None:
+                                for key, value in data.items():
+                                    if key not in output_grids:
+                                        output_grids[key] = {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
+                                    cmc_and_year_to_vals[(None, year)][key].append(value)
+                                continue
+
+                            for key in crop_output_keys:
                                 crop_name = str(data.get("Crop", "")).lower()
 
                                 if "tomato" not in crop_name:
@@ -154,13 +158,13 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                                     v = data[key]
                                     if isinstance(v, list):
                                         for i, v_ in enumerate(v):
-                                            cmc_and_year_to_vals[(cm_count, data["Year"])][f'{key}_{i + 1}'].append(v_)
+                                            cmc_and_year_to_vals[(cm_count, year)][f'{key}_{i + 1}'].append(v_)
                                     else:
-                                        cmc_and_year_to_vals[(cm_count, data["Year"])][key].append(v)
+                                        cmc_and_year_to_vals[(cm_count, year)][key].append(v)
                                 # if a key is missing, because that monica event was never raised/reached, create the empty list
                                 # so a no-data value is being produced
                                 else:
-                                    cmc_and_year_to_vals[(cm_count, data["Year"])][key]
+                                    cmc_and_year_to_vals[(cm_count, year)][key]
 
                     # potentially aggregate multiple data per cell and finally store them for this row
                     for (cm_count, year), key_to_vals in cmc_and_year_to_vals.items():
@@ -181,6 +185,9 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
             rowstr = " ".join(["-9999" for __ in range(ncols)])
             file_.write(rowstr + "\n")
 
+    yearly_files = write_row_to_grids.yearly_files[setup_id]
+    written_yearly_files = set()
+
     # iterate over all prepared data for a single row and write row
     for key, y2d_ in output_grids.items():
         y2d = y2d_["data"]
@@ -194,18 +201,33 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         for (cm_count, year), row_arr in y2d.items():
             crop = cmc_to_crop[cm_count] if cm_count in cmc_to_crop else "none"
             crop = crop.replace("/", "").replace(" ", "")
-            key2 = key.replace("/", "_")
-            path_to_file = path_to_output_dir + crop + "_" + key2 + "_" + str(year) + "_" + str(cm_count) + ".asc"
+            key2 = key.replace("/", "_").replace("\\", "_")
+            if cm_count is None:
+                filename = f"{key2}_{year}.asc"
+            else:
+                filename = f"{crop}_{key2}_{year}_{cm_count}.asc"
+            path_to_file = path_to_output_dir + filename
 
             if not os.path.isfile(path_to_file):
                 with open(path_to_file, "w") as _:
                     _.write(header)
-                    write_row_to_grids.list_of_output_files[setup_id].append(path_to_file)
+                    if cm_count is None:
+                        _.write((" ".join(["-9999"] * ncols) + "\n") * (row - start_row))
+                    else:
+                        write_row_to_grids.list_of_output_files[setup_id].append(path_to_file)
 
             with open(path_to_file, "a") as file_:
-                write_nodata_rows(file_)
+                if cm_count is None:
+                    yearly_files.add(path_to_file)
+                    written_yearly_files.add(path_to_file)
+                else:
+                    write_nodata_rows(file_)
                 rowstr = " ".join(["-9999" if int(x) == -9999 else mold(x) for x in row_arr])
                 file_.write(rowstr + "\n")
+
+    for path_to_file in yearly_files - written_yearly_files:
+        with open(path_to_file, "a") as file_:
+            file_.write(" ".join(["-9999"] * ncols) + "\n")
 
     # clear the no-data row count when no-data rows have been written before a data row
     if not is_no_data_row:
@@ -370,7 +392,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             exit(1)
 
                 write_row_to_grids(data["row-col-data"], data["next-row"], data["ncols"], data["header"],
-                                   path_to_out_dir, path_to_csv_out_dir, setup_id)
+                                   path_to_out_dir, path_to_csv_out_dir, setup_id, start_row)
 
                 # debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
                 #     data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
