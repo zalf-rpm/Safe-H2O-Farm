@@ -60,15 +60,7 @@ def create_output(msg):
                 crop_results[vals["CM-count"]].update(vals)
             elif orig_spec == '"yearly"' and "Year" in vals:
                 yearly_values = yearly_results.setdefault((None, vals["Year"]), {})
-                for key, value in vals.items():
-                    if key == "Year":
-                        continue
-                    if isinstance(value, list):
-                        for index, item in enumerate(value, start=1):
-                            if type(item) in (int, float):
-                                yearly_values[f"{key}_{index}"] = item
-                    elif type(value) in (int, float):
-                        yearly_values[key] = value
+                yearly_values.update({key: value for key, value in vals.items() if key != "Year"})
 
     yearly_results.update({
         (cm_count, vals["Year"]): vals for cm_count, vals in crop_results.items() if "Year" in vals
@@ -90,9 +82,9 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "NLeach": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "NLeach-yearly": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "NLeach-yearly": {"section": "yearly", "data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "WDrain": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        "WDrain-yearly": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "WDrain-yearly": {"section": "yearly", "data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "SumNUp": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Irrig": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "SOC-avg3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
@@ -118,7 +110,8 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "AtmCO2": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
 
     }
-    crop_output_keys = tuple(output_grids)
+    crop_output_keys = [key for key, grid in output_grids.items() if grid.get("section", "crop") == "crop"]
+    yearly_output_keys = [key for key, grid in output_grids.items() if grid.get("section") == "yearly"]
 
     cmc_to_crop = {}
 
@@ -138,10 +131,17 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                         # if we got multiple datasets per cell, iterate over them and aggregate them in the following step
                         for (cm_count, year), data in cell_data.items():
                             if cm_count is None:
-                                for key, value in data.items():
-                                    if key not in output_grids:
-                                        output_grids[key] = {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
-                                    cmc_and_year_to_vals[(None, year)][key].append(value)
+                                for key in yearly_output_keys:
+                                    value = data.get(key)
+                                    if isinstance(value, list):
+                                        for index, item in enumerate(value, start=1):
+                                            if type(item) in (int, float):
+                                                layer_key = f"{key}_{index}"
+                                                if layer_key not in output_grids:
+                                                    output_grids[layer_key] = {**output_grids[key], "data": make_dict_nparr()}
+                                                cmc_and_year_to_vals[(None, year)][layer_key].append(item)
+                                    elif type(value) in (int, float):
+                                        cmc_and_year_to_vals[(None, year)][key].append(value)
                                 continue
 
                             for key in crop_output_keys:
