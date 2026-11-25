@@ -102,11 +102,9 @@
 				["DOY|DOY-7", "FIRST"]
 			],
 
-			{"while": ["Stage", "=", 7]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["DOY|AutoHarvestDOY", "LAST"]
+			{"at": "AutomaticHarvest"}, [
+				"CM-count",
+				"DOY|AutoHarvestDOY"
 			],
 
 			"_daily", [

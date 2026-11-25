@@ -19,7 +19,7 @@ from collections import defaultdict
 import csv
 import numpy as np
 import os
-from pyproj import CRS, Transformer
+from pyproj import CRS
 import sys
 import zmq
 import tarfile
@@ -51,30 +51,38 @@ USE_LANDUSE = False
 
 
 def create_output(msg):
+    phenology_keys = ("DOY-3", "DOY-4", "DOY-5", "DOY-6", "DOY-7", "AutoHarvestDOY")
     crop_results = defaultdict(dict)
+    phenology_results = defaultdict(dict)
     yearly_results = {}
+
     for section in msg.get("data", []):
         orig_spec = section.get("origSpec", "")
         for vals in section.get("results", []):
-            if orig_spec == '"crop"' and "CM-count" in vals:
-                crop_results[vals["CM-count"]].update(vals)
-            elif orig_spec == '"yearly"' and "Year" in vals:
+            if orig_spec == '"yearly"' and "Year" in vals:
                 yearly_values = yearly_results.setdefault((None, vals["Year"]), {})
                 yearly_values.update({key: value for key, value in vals.items() if key != "Year"})
+            elif "CM-count" in vals:
+                cm_count = vals["CM-count"]
+                if orig_spec == '"crop"':
+                    crop_results[cm_count].update(vals)
+                else:
+                    for key in phenology_keys:
+                        if key in vals:
+                            phenology_results[cm_count].setdefault(key, vals[key])
 
-    yearly_results.update({
-        (cm_count, vals["Year"]): vals for cm_count, vals in crop_results.items() if "Year" in vals
-    })
+    for cm_count, vals in crop_results.items():
+        if "Year" in vals:
+            yearly_results[(cm_count, vals["Year"])] = {**vals, **phenology_results.get(cm_count, {})}
+
     return yearly_results
 
 
 def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, path_to_csv_output_dir, setup_id, start_row=0):
     """write grids row by row"""
 
-    if not hasattr(write_row_to_grids, "nodata_row_count"):
-        write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
-        write_row_to_grids.list_of_output_files = defaultdict(list)
-        write_row_to_grids.yearly_files = defaultdict(set)
+    if not hasattr(write_row_to_grids, "grid_files"):
+        write_row_to_grids.grid_files = defaultdict(set)
 
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
@@ -115,17 +123,14 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
     cmc_to_crop = {}
 
-    is_no_data_row = True
     # skip this part if we write just a nodata line
     if row in row_col_data:
-        no_data_cols = ncols
         for col in range(0, ncols):
             if col in row_col_data[row]:
                 rcd_val = row_col_data[row][col]
                 if rcd_val == -9999:
                     continue
                 else:
-                    no_data_cols -= 1
                     cmc_and_year_to_vals = defaultdict(lambda: defaultdict(list))
                     for cell_data in rcd_val:
                         # if we got multiple datasets per cell, iterate over them and aggregate them in the following step
@@ -175,74 +180,41 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                             else:
                                 output_vals[(cm_count, year)][col] = -9999
 
-        is_no_data_row = no_data_cols == ncols
-
-    if is_no_data_row:
-        write_row_to_grids.nodata_row_count[setup_id] += 1
-
-    def write_nodata_rows(file_):
-        for _ in range(write_row_to_grids.nodata_row_count[setup_id]):
-            rowstr = " ".join(["-9999" for __ in range(ncols)])
-            file_.write(rowstr + "\n")
-
-    yearly_files = write_row_to_grids.yearly_files[setup_id]
-    written_yearly_files = set()
+    grid_files = write_row_to_grids.grid_files[setup_id]
+    written_files = set()
+    nodata_line = " ".join(["-9999"] * ncols) + "\n"
 
     # iterate over all prepared data for a single row and write row
-    for key, y2d_ in output_grids.items():
-        y2d = y2d_["data"]
-        cast_to = y2d_["cast-to"]
-        digits = y2d_.get("digits", 0)
-        if cast_to == "int":
-            mold = lambda x: str(int(x))
-        else:
-            mold = lambda x: str(round(x, digits))
+    for key, grid in output_grids.items():
+        grid_key = key.replace("/", "_").replace("\\", "_")
 
-        for (cm_count, year), row_arr in y2d.items():
-            crop = cmc_to_crop[cm_count] if cm_count in cmc_to_crop else "none"
-            crop = crop.replace("/", "").replace(" ", "")
-            key2 = key.replace("/", "_").replace("\\", "_")
+        for (cm_count, year), row_arr in grid["data"].items():
             if cm_count is None:
-                filename = f"{key2}_{year}.asc"
+                filename = f"{grid_key}_{year}.asc"
             else:
-                filename = f"{crop}_{key2}_{year}_{cm_count}.asc"
-            path_to_file = path_to_output_dir + filename
+                crop = cmc_to_crop[cm_count].replace("/", "").replace(" ", "")
+                filename = f"{crop}_{grid_key}_{year}_{cm_count}.asc"
 
-            if not os.path.isfile(path_to_file):
-                with open(path_to_file, "w") as _:
-                    _.write(header)
-                    if cm_count is None:
-                        _.write((" ".join(["-9999"] * ncols) + "\n") * (row - start_row))
-                    else:
-                        write_row_to_grids.list_of_output_files[setup_id].append(path_to_file)
+            path_to_file = os.path.join(path_to_output_dir, filename)
+            if path_to_file not in grid_files:
+                with open(path_to_file, "w") as file_:
+                    file_.write(header)
+                    file_.write(nodata_line * (row - start_row))
+                grid_files.add(path_to_file)
+
+            if grid["cast-to"] == "int":
+                row_values = [str(int(value)) for value in row_arr]
+            else:
+                row_values = ["-9999" if int(value) == -9999 else str(round(value, grid.get("digits", 0)))
+                              for value in row_arr]
 
             with open(path_to_file, "a") as file_:
-                if cm_count is None:
-                    yearly_files.add(path_to_file)
-                    written_yearly_files.add(path_to_file)
-                else:
-                    write_nodata_rows(file_)
-                rowstr = " ".join(["-9999" if int(x) == -9999 else mold(x) for x in row_arr])
-                file_.write(rowstr + "\n")
+                file_.write(" ".join(row_values) + "\n")
+            written_files.add(path_to_file)
 
-    for path_to_file in yearly_files - written_yearly_files:
+    for path_to_file in grid_files - written_files:
         with open(path_to_file, "a") as file_:
-            file_.write(" ".join(["-9999"] * ncols) + "\n")
-
-    # clear the no-data row count when no-data rows have been written before a data row
-    if not is_no_data_row:
-        write_row_to_grids.nodata_row_count[setup_id] = 0
-
-    # if we're at the end of the output and just empty lines are left, then they won't be written in the
-    # above manner because there won't be any rows with data where they could be written before
-    # so add no-data rows simply to all files we've written to before
-    if is_no_data_row \
-            and write_row_to_grids.list_of_output_files[setup_id] \
-            and write_row_to_grids.nodata_row_count[setup_id] > 0:
-        for path_to_file in write_row_to_grids.list_of_output_files[setup_id]:
-            with open(path_to_file, "a") as file_:
-                write_nodata_rows(file_)
-        write_row_to_grids.nodata_row_count[setup_id] = 0
+            file_.write(nodata_line)
 
     if row in row_col_data:
         del row_col_data[row]
