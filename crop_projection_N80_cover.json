@@ -29,7 +29,7 @@
 					"irrigateCrop": true,
 					"parameters": {
 						"startDate": "0001-05-28",
-						"endDate": "0001-09-03",
+						"stopDate": "0001-09-03",
 						"irrigationParameters": {
 							"nitrateConcentration": [0, "mg dm-3"],
 							"sulfateConcentration": [0, "mg dm-3"]
