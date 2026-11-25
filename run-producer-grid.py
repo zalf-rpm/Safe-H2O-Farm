@@ -269,6 +269,19 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # set the current crop used for this run id
         crop_json["cropRotation"][2] = crop_id
 
+        irrigate_crop = setup.get("irrigation")
+        if isinstance(irrigate_crop, bool):
+            rotation = crop_json["cropRotationTemplates"][crop_id]
+            for cultivation_method in rotation:
+                worksteps = cultivation_method["worksteps"]
+                if irrigate_crop:
+                    for workstep in worksteps:
+                        if workstep.get("type") == "AutomaticIrrigation":
+                            workstep["irrigateCrop"] = True
+                else:
+                    cultivation_method["worksteps"] = [workstep for workstep in worksteps
+                                                       if workstep.get("type") != "AutomaticIrrigation"]
+
         # create environment template from json templates
         env_template = monica_io3.create_env_json_from_json_config({
             "crop": crop_json,
