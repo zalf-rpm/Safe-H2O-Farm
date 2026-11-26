@@ -19,6 +19,7 @@ import csv
 from math import floor
 import json
 import numpy as np
+from pathlib import Path
 from pyproj import CRS, Transformer
 import sqlite3
 import sys
@@ -219,8 +220,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     soil_grid = np.loadtxt(path_to_soil_grid, dtype=int, skiprows=6)
     print("read: ", path_to_soil_grid)
 
-    # Validate all selected coordinates and overrides before submitting environments.
+    # Prepare all selected setups before submitting environments.
     selections = {}
+    climate_root = Path(paths["path-to-climate-dir"])
+    climate_interpolators = {}
     crop_grid = None
     for setup_id in run_setups:
         setup = setups[setup_id]
@@ -238,13 +241,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 path_to_crop_grid = soil_data_dir + DATA_GRID_CROPS
                 crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
                 print("read: ", path_to_crop_grid)
-            selections[setup_id] = (cells, overrides)
+            climate_dir = climate_root / setup.get("climate_path_to_latlon_file", "")
+            climate_map = Path(TEMPLATE_PATH_LATLON.format(path_to_climate_dir=climate_dir))
+            if climate_map not in climate_interpolators:
+                climate_interpolators[climate_map] = Mrunlib.create_climate_geoGrid_interpolator_from_json_file(
+                    climate_map, wgs84_crs, soil_crs, {}
+                )
+                print("created climate grid interpolator: ", climate_map)
+            selections[setup_id] = (cells, overrides, climate_interpolators[climate_map])
         except ValueError as error:
             raise ValueError(f"run-id {setup_id}: {error}") from error
 
     coordinate_batch = {
         "batch_id": uuid4().hex,
-        "batch_size": sum(len(cells) for cells, _ in selections.values()),
+        "batch_size": sum(len(cells) for cells, _, _ in selections.values()),
     }
 
     soil_crs_to_x_transformers = {wgs84_crs: Transformer.from_crs(soil_crs, wgs84_crs)}
@@ -271,12 +281,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     slope_interpolate = Mrunlib.create_ascii_grid_interpolator(slope_grid, slope_metadata)
     print("read: ", path_to_slope_grid)
 
-    climate_map = TEMPLATE_PATH_LATLON
-    climate_data_interpolator = Mrunlib.create_climate_geoGrid_interpolator_from_json_file(
-        climate_map, wgs84_crs, soil_crs, {}
-    )
-    print("created climate grid interpolator: ", climate_map)
-
     srows = int(soil_metadata["nrows"])
     scellsize = soil_metadata["cellsize"]
     xllcorner = soil_metadata["xllcorner"]
@@ -290,8 +294,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     sent_env_count = total_env_count = 0
 
-    for setup_id, (cells, overrides) in selections.items():
-
+    for setup_id, (cells, overrides, climate_data_interpolator) in selections.items():
         setup = setups[setup_id]
         gcm = setup["gcm"]
         rcm = setup["rcm"]
