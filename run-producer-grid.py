@@ -40,7 +40,6 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
-        "path-to-projects-dir": "./data/germany/",
         "path-debug-write-folder": "./debug-out/",
     },
     "mbm-local-remote": {
@@ -68,7 +67,6 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
-        "path-to-projects-dir": "/project/monica-agritwin/",
         "path-debug-write-folder": "/out/debug-out/",
     }
 }
@@ -173,8 +171,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
-    if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-        path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[3])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
