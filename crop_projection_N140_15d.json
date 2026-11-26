@@ -16,10 +16,15 @@
 		"TO": [{
 			"worksteps": [
 				{
+					"date": "0000-05-13",
+					"type": "Sowing",
+					"crop": ["ref", "crops", "TO"]
+				},
+				{
 					"type": "AutomaticIrrigation",
 					"irrigateCrop": true,
 					"parameters": {
-						"startDate": "0000-05-13",
+						"startDate": "0000-05-14",
 						"stopDate": "0000-09-30",
 						"irrigationParameters": {
 							"nitrateConcentration": [0, "mg dm-3"],
@@ -30,11 +35,6 @@
 						"calc_nFC_until_depth_m": [0.3, "m"]
 					}
 				},				
-				{
-					"date": "0000-05-13",
-					"type": "Sowing",
-					"crop": ["ref", "crops", "TO"]
-				},
 				{
 					"date": "0000-06-07",
 					"type": "MineralFertilization",
@@ -75,8 +75,7 @@
 				"type": "AutomaticHarvest",
 				"harvest-time": "maturity",
 				"latest-date": "0000-09-30"
-			    }	
-				
+			    }
 			]
 		}]
 	},
