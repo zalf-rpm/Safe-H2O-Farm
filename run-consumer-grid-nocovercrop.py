@@ -88,7 +88,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
     output_grids = {
         # "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "NLeach": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "NLeach-yearly": {"section": "yearly", "data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "WDrain": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
@@ -100,7 +100,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "SOC-X-Y": {"data": make_dict_nparr(), "cast-to": "float", "digits": 4},
         # "TempSum": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "HeatRed": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "HeatRed": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "FrostRed": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
 
 
