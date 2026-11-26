@@ -88,7 +88,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
     output_grids = {
         # "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "NLeach": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "NLeach-yearly": {"section": "yearly", "data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "WDrain": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
@@ -109,7 +109,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "DOY-5": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-6": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
         # "DOY-7": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
-        "AutoHarvestDOY": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
+        # "AutoHarvestDOY": {"data": make_dict_nparr(), "cast-to": "int", "digits": 0},
 
         # "Precip": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Tmin": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
